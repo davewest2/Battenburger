@@ -1,7 +1,6 @@
 package com.example.battenburger
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -21,21 +20,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import coil.compose.AsyncImage
-import com.example.battenburger.presentation.TransformImage
+import com.example.battenburger.domain.convertUriToBitmap
+import com.example.battenburger.domain.pixelManipulator
+import com.example.battenburger.domain.saveImageToInternalStorage
 import com.example.battenburger.ui.theme.BattenburgerTheme
-import java.io.File
-import java.io.FileOutputStream
-import java.util.Date
 
 
-// TODO: Insert a button to Battenburg Me which goes to the next screen.
-// TODO: Next screen takes the image and does all the save and coloration
-// TODO: Need to work out if the save stuff needs to be done asynchronously and then how to use the saved version
 const val TAG = "TAG"
 lateinit var imageBitMap: Bitmap
 
@@ -47,10 +39,14 @@ class MainActivity : ComponentActivity() {
             //Navigation()
             BattenburgerTheme {
                 Log.d(TAG, "starting app")
+                val stockBitmap = Bitmap.createBitmap(20, 20, Bitmap.Config.ARGB_8888)
                 val context = LocalContext.current
-                var files: Array<String> = context.fileList()
+                val files: Array<String> = context.fileList()
                 var selectedImageUri by remember {
                     mutableStateOf<Uri?>(null)
+                }
+                var quadBitMapToDisplay by remember {
+                    mutableStateOf<Bitmap>(stockBitmap)
                 }
 
                 val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -86,18 +82,32 @@ class MainActivity : ComponentActivity() {
                                 Log.d(TAG, "image saved to internal storage, filename ${files[8]} which should be image.jpg")
                             }
                             ) {
-                                Text(text = "Seve image")
+                                Text(text = "Save image")
+                            }
+                            Button(onClick = {
+                                imageBitMap = convertUriToBitmap(context)
+                                Log.d(TAG, "uri converted to bitmap")
+                            }
+                            ) {
+                                Text(text = "Convert image to bitmap")
+                            }
+
+                            Button(onClick = {
+                                quadBitMapToDisplay = pixelManipulator(imageBitMap)
+                                Log.d(TAG, "Join images button pressed")
+                            }
+                            ) {
+                                Text(text = "Battenburg image")
                             }
                         }
-                        AsyncImage(
-                            model = selectedImageUri,
-                            contentDescription = "my photo",
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Log.d(TAG, "Async image displayed")
 
-                        DisplaySavedImage()
+                        AsyncImage(
+                            model = quadBitMapToDisplay,
+                            contentDescription = "my photo battenburged",
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                        Log.d(TAG, "Async quadbitmap image displayed")
+                        Log.d(TAG, "Size of quadbitmap image is ${quadBitMapToDisplay.width} wide and ${quadBitMapToDisplay.height} high")
 
                     }
                 }
