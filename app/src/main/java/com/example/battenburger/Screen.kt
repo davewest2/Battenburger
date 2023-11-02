@@ -1,8 +1,9 @@
 package com.example.battenburger
 
 sealed class Screen(val route: String) {
-    object BattenburgerThemeScreen: Screen(route = "battenburgtheme_screen")
-    object TransformImageScreen: Screen(route = "transformimage_screen")
-    //object AttachCameraScreen: Screen(route = "attachcamera_screen")
+
+    object SelectPhotoScreen: Screen(route = "selectphoto_screen")
+    object CropImageScreen: Screen(route = "cropimage_screen")
+    object DisplayBattenburgScreen: Screen(route = "displaybattenburg_screen")
 
 }
