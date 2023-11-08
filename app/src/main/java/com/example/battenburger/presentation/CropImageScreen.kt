@@ -41,7 +41,7 @@ fun CropImageScreen(navController: NavController){
             Button(
                 modifier = Modifier.weight(0.33f),
                 onClick = {
-                    quadImageBitMap = pixelManipulator(selectedImageBitMap)
+                    quadImageBitMap = pixelManipulator(context, selectedImageBitMap)
                     Log.d(TAG, "Join images button pressed")
                 }
             ) {
