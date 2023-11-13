@@ -21,12 +21,19 @@ import com.example.battenburger.domain.convertUriToBitmap
 import com.example.battenburger.domain.pixelManipulator
 import com.example.battenburger.quadImageBitMap
 import com.example.battenburger.selectedImageBitMap
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun CropImageScreen(navController: NavController){
+fun BattenburgImageScreen(navController: NavController){
     val context = LocalContext.current
-    var stockBitmap = Bitmap.createBitmap(20, 20, Bitmap.Config.ARGB_8888)
     selectedImageBitMap = convertUriToBitmap(context)
 
     Column(
@@ -41,25 +48,33 @@ fun CropImageScreen(navController: NavController){
             Button(
                 modifier = Modifier.weight(0.33f),
                 onClick = {
-                    quadImageBitMap = pixelManipulator(context, selectedImageBitMap)
-                    Log.d(TAG, "Join images button pressed")
+                    GlobalScope.launch() {
+                        quadImageBitMap = pixelManipulator(context, selectedImageBitMap)
+                        Log.d(TAG, "pixelmanipulator called, creating burgimage....long process started")
+                        Log.d(TAG, "quadbitmap set to burgimage from above long process")
+                    }
+                    runBlocking {
+                        delay(3000L)
+                        navController.navigate(Screen.DisplayBattenburgScreen.route)
+                        Log.d(TAG, "navigate to the displaybattenburg screen. If you see this before quadbitmap set to burgimage then we're in trouble!")
+                    }
                 }
             ) {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Battenburg image")
+                    text = "Battenburg it!")
             }
-            Button(
-                modifier = Modifier.weight(0.33f),
-                onClick = {
-                    navController.navigate(Screen.DisplayBattenburgScreen.route)
-                    Log.d(TAG, "Join images button pressed")
-                }
-            ) {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = "View Battenburger!")
-            }
+//            Button(
+//                modifier = Modifier.weight(0.33f),
+//                onClick = {
+//                    navController.navigate(Screen.DisplayBattenburgScreen.route)
+//                    Log.d(TAG, "Join images button pressed")
+//                }
+//            ) {
+//                Text(
+//                    textAlign = TextAlign.Center,
+//                    text = "View Battenburger!")
+//            }
         }
 
         AsyncImage(

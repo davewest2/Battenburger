@@ -13,7 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
-fun pixelManipulator(context: Context, bitmap: Bitmap): Bitmap {
+suspend fun pixelManipulator(context: Context, bitmap: Bitmap): Bitmap {
     val resources = context.resources
     val exampleBitmap = BitmapFactory.decodeResource(resources, R.drawable.daveandkatie)
     // TODO: Change back to bitmap variable when the selected photo is required

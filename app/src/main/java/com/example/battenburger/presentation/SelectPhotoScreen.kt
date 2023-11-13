@@ -20,7 +20,12 @@ import com.example.battenburger.Screen
 import com.example.battenburger.TAG
 import com.example.battenburger.domain.SelectPhotoViewModel
 import com.example.battenburger.domain.saveImageToInternalStorage
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun SelectPhotoScreen(navController: NavController) {
 
@@ -60,8 +65,11 @@ fun SelectPhotoScreen(navController: NavController) {
                 Button(
                     modifier = Modifier.weight(0.33f),
                     onClick = {
-                        saveImageToInternalStorage(context, selectPhotoViewModel.selectedImageUri!!)
-                        Log.d(TAG, "image saved to internal storage, filename ${files[0]} which should be image.jpg")
+                        GlobalScope.launch(Dispatchers.IO) {
+                            saveImageToInternalStorage(context, selectPhotoViewModel.selectedImageUri!!)
+                            Log.d(TAG, "image saved to internal storage, filename ${files} which should be image.jpg")
+                        }
+                        navController.navigate(Screen.CropImageScreen.route)
                     }
 
                 ) {
@@ -71,16 +79,16 @@ fun SelectPhotoScreen(navController: NavController) {
                 }
 
 
-                Button(
-                    modifier = Modifier.weight(0.33f),
-                    onClick = {
-                        navController.navigate(Screen.CropImageScreen.route)
-                    }
-                ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = "Next")
-                }
+//                Button(
+//                    modifier = Modifier.weight(0.33f),
+//                    onClick = {
+//                        navController.navigate(Screen.CropImageScreen.route)
+//                    }
+//                ) {
+//                    Text(
+//                        textAlign = TextAlign.Center,
+//                        text = "Next")
+//                }
             }
 
             AsyncImage(
