@@ -13,10 +13,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
-suspend fun pixelManipulator(context: Context, bitmap: Bitmap): Bitmap {
+    fun pixelManipulator(context: Context, bitmap: Bitmap): Bitmap {
     val resources = context.resources
-    val exampleBitmap = BitmapFactory.decodeResource(resources, R.drawable.daveandkatie)
-    // TODO: Change back to bitmap variable when the selected photo is required
+    val exampleBitmap = Bitmap.createBitmap(bitmap)
+//    val exampleBitmap = BitmapFactory.decodeResource(resources, R.drawable.daveandkatie)
     val ratio1 = exampleBitmap.width.toDouble()
     val ratio2 = exampleBitmap.height.toDouble()
     val ratio = ((ratio1/ratio2)*500).toInt()
@@ -38,9 +38,7 @@ Log.d(TAG, "Katie drawable is of size ${battenburgSliceImage.width} width and ${
 // TODO: Eliminated the pinkpixel and yellowpixel changes as the battenburg slice colour effects this colour change
 
         val overlayJustSquaresx1 = (0.18*resizedBattenburgBackgroundImage.width).toInt()
-        val overlayJustSquaresx2 = (0.82*resizedBattenburgBackgroundImage.width).toInt()
         val overlayJustSquaresy1 = (0.06*resizedBattenburgBackgroundImage.height).toInt()
-        val overlayJustSquaresy2 = (0.72*resizedBattenburgBackgroundImage.height).toInt()
 
         for (i in 0 until battenburgQuarterImageBitmap.width) {
             for (j in 0 until battenburgQuarterImageBitmap.height) {
@@ -82,9 +80,6 @@ Log.d(TAG, "Katie drawable is of size ${battenburgSliceImage.width} width and ${
 // TODO: Blend the edge of the overlaid image. Gradually change the overlay values for some pixels at the edges. 
             }
         }
-        //marzipanThis(quadBitmap)
-
-
     }
     return resizedBattenburgBackgroundImage
 }
