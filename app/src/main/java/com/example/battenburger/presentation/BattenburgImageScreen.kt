@@ -1,7 +1,5 @@
 package com.example.battenburger.presentation
 
-import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,15 +14,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.battenburger.Screen
-import com.example.battenburger.TAG
+import com.example.battenburger.domain.BattenburgImageScreenViewModel
 import com.example.battenburger.domain.convertUriToBitmap
 import com.example.battenburger.domain.pixelManipulator
 import com.example.battenburger.quadImageBitMap
 import com.example.battenburger.selectedImageBitMap
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -35,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 fun BattenburgImageScreen(navController: NavController){
     val context = LocalContext.current
     selectedImageBitMap = convertUriToBitmap(context)
+    val viewmodel = BattenburgImageScreenViewModel()
 
     Column(
         modifier = Modifier
@@ -49,14 +46,11 @@ fun BattenburgImageScreen(navController: NavController){
                 modifier = Modifier.weight(0.33f),
                 onClick = {
                     GlobalScope.launch() {
-                        quadImageBitMap = pixelManipulator(context, selectedImageBitMap)
-                        Log.d(TAG, "pixelmanipulator called, creating burgimage....long process started")
-                        Log.d(TAG, "quadbitmap set to burgimage from above long process")
+                        quadImageBitMap = pixelManipulator(context, viewmodel.viewmodelImageToBattenburg)
                     }
                     runBlocking {
                         delay(3000L)
                         navController.navigate(Screen.DisplayBattenburgScreen.route)
-                        Log.d(TAG, "navigate to the displaybattenburg screen. If you see this before quadbitmap set to burgimage then we're in trouble!")
                     }
                 }
             ) {
@@ -64,17 +58,6 @@ fun BattenburgImageScreen(navController: NavController){
                     textAlign = TextAlign.Center,
                     text = "Battenburg it!")
             }
-//            Button(
-//                modifier = Modifier.weight(0.33f),
-//                onClick = {
-//                    navController.navigate(Screen.DisplayBattenburgScreen.route)
-//                    Log.d(TAG, "Join images button pressed")
-//                }
-//            ) {
-//                Text(
-//                    textAlign = TextAlign.Center,
-//                    text = "View Battenburger!")
-//            }
         }
 
         AsyncImage(

@@ -77,18 +77,6 @@ fun SelectPhotoScreen(navController: NavController) {
                         textAlign = TextAlign.Center,
                         text = "Save image")
                 }
-
-
-//                Button(
-//                    modifier = Modifier.weight(0.33f),
-//                    onClick = {
-//                        navController.navigate(Screen.CropImageScreen.route)
-//                    }
-//                ) {
-//                    Text(
-//                        textAlign = TextAlign.Center,
-//                        text = "Next")
-//                }
             }
 
             AsyncImage(

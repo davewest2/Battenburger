@@ -27,7 +27,7 @@ import java.io.File
 
 @Composable
 fun DisplayBattenburgScreen(navController: NavController){
-    val context = LocalContext.current
+    val viewModel = DisplayBattenburgViewModel()
 
     Column(
         Modifier
@@ -37,7 +37,7 @@ fun DisplayBattenburgScreen(navController: NavController){
         Spacer(modifier = Modifier.size(100.dp))
 
             AsyncImage(
-                model = quadImageBitMap,
+                model = viewModel.battenburg,
                 contentDescription = null,
                 modifier = Modifier
                     .size(400.dp)
