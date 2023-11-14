@@ -1,6 +1,5 @@
 package com.example.battenburger.domain
 
-import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import com.example.battenburger.selectedImageBitMap
 

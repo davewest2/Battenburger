@@ -1,4 +1,4 @@
-package com.example.battenburger.presentation
+package com.example.battenburger.domain
 
 import androidx.lifecycle.ViewModel
 import com.example.battenburger.quadImageBitMap
