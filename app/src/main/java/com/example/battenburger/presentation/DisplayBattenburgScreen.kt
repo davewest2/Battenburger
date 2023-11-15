@@ -21,9 +21,6 @@ import coil.compose.AsyncImage
 import com.example.battenburger.domain.DisplayBattenburgViewModel
 import com.example.battenburger.domain.saveImageToMediaStore
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 
 // TODO: Optional permissions request code commented out.
 //  API level < 29 (Android 10): WRITE_EXTERNAL_STORAGE required

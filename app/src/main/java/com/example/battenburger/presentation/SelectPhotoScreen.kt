@@ -3,17 +3,23 @@ package com.example.battenburger.presentation
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.battenburger.Screen
@@ -45,12 +51,17 @@ fun SelectPhotoScreen(navController: NavController) {
     ) {
         item {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Yellow),
+                horizontalArrangement = Arrangement.SpaceAround,
+
             ) {
                 Button(onClick = {
                     photoPickerLauncher.launch("image/*")
-                }
+                },
+                    elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)
                 ) {
                     Text(text = "Pick a photo")
                 }
@@ -59,18 +70,22 @@ fun SelectPhotoScreen(navController: NavController) {
 
         item {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Yellow),
+                horizontalArrangement = Arrangement.SpaceAround,
+
             ) {
                 Button(
-                    modifier = Modifier.weight(0.33f),
                     onClick = {
                         GlobalScope.launch(Dispatchers.IO) {
                             saveImageToInternalStorage(context, selectPhotoViewModel.selectedImageUri!!)
                             Log.d(TAG, "image saved to internal storage, filename ${files} which should be image.jpg")
                         }
                         navController.navigate(Screen.CropImageScreen.route)
-                    }
+                    },
+                    elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)
 
                 ) {
                     Text(
@@ -82,7 +97,9 @@ fun SelectPhotoScreen(navController: NavController) {
             AsyncImage(
                 model = selectPhotoViewModel.selectedImageUri,
                 contentDescription = "my selected image",
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Yellow),
             )
             Log.d(TAG, "Async selected image displayed")
         }
