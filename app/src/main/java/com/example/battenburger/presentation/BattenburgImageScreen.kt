@@ -16,7 +16,7 @@ import coil.compose.AsyncImage
 import com.example.battenburger.Screen
 import com.example.battenburger.domain.BattenburgImageScreenViewModel
 import com.example.battenburger.domain.convertUriToBitmap
-import com.example.battenburger.domain.pixelManipulator
+import com.example.battenburger.domain.manualOverlay
 import com.example.battenburger.quadImageBitMap
 import com.example.battenburger.selectedImageBitMap
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -46,7 +46,7 @@ fun BattenburgImageScreen(navController: NavController){
                 modifier = Modifier.weight(0.33f),
                 onClick = {
                     GlobalScope.launch() {
-                        quadImageBitMap = pixelManipulator(context, viewmodel.viewmodelImageToBattenburg)
+                        quadImageBitMap = manualOverlay(context, viewmodel.viewmodelImageToBattenburg)
                     }
                     runBlocking {
                         delay(3000L)

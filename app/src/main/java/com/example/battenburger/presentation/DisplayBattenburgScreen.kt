@@ -2,6 +2,7 @@ package com.example.battenburger.presentation
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.battenburger.R
 import com.example.battenburger.domain.DisplayBattenburgViewModel
+import com.example.battenburger.domain.UseCanvasToOverlay
 import com.example.battenburger.domain.saveImageToMediaStore
+import com.example.battenburger.quadImageBitMap
+import com.example.battenburger.selectedImageBitMap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 // TODO: Optional permissions request code commented out.
@@ -30,30 +35,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 fun DisplayBattenburgScreen(navController: NavController){
     val viewModel = DisplayBattenburgViewModel()
     val context = LocalContext.current
-//    val writeExeternalPermissionState = rememberPermissionState(
-//        android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    val resources = context.resources
+    val cakeImage = BitmapFactory.decodeResource(resources, R.drawable.battenburgslice2)
 
-    DisplayBattenburg(context,"replace this string", viewModel.battenburg)
-
-//    if (writeExeternalPermissionState.status.isGranted) {
-//        DisplayBattenburg(context,"replace this string", viewModel.battenburg)
-//    } else {
-//        Column {
-//            val textToShow = if (writeExeternalPermissionState.status.shouldShowRationale) {
-//                "Access is required in order to save your Battenburg! Please grant the permission."
-//            } else {
-//                // If it's the first time the user lands on this feature, or the user
-//                // doesn't want to be asked again for this permission, explain that the
-//                // permission is required
-//                "Access permission required for this feature to be available. " +
-//                        "Please grant the permission"
-//            }
-//            Text(textToShow)
-//            Button(onClick = { writeExeternalPermissionState.launchPermissionRequest() }) {
-//                Text("Request permission")
-//            }
-//        }
-//    }
+UseCanvasToOverlay(bitmap1 = selectedImageBitMap, context = context)
+   // DisplayBattenburg(context,"replace this string", viewModel.battenburg)
+    //BlendImagesInComposable(bitmap1 = quadImageBitMap, bitmap2 = cakeImage)
+    
 }
 
 @Composable

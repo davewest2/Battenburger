@@ -3,110 +3,148 @@ package com.example.battenburger.domain
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color.*
 import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.example.battenburger.R
 import com.example.battenburger.TAG
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
-@OptIn(DelicateCoroutinesApi::class)
-    fun pixelManipulator(context: Context, bitmap: Bitmap): Bitmap {
+
+fun provideQuadimage(bitmap: Bitmap): Bitmap {
+    val quarterBitmap = Bitmap.createBitmap(bitmap)
+    val ratio1 = quarterBitmap.width.toDouble()
+    val ratio2 = quarterBitmap.height.toDouble()
+    val ratio = ((ratio1 / ratio2) * 500).toInt()
+    val quadImageBitmap = Bitmap.createScaledBitmap(quarterBitmap, ratio, ratio, true)
+    val imageHeight = quadImageBitmap.height
+    val imageWidth = quadImageBitmap.width
+    val quadBitmapHolder =
+        Bitmap.createBitmap(imageWidth * 2, imageHeight * 2, Bitmap.Config.ARGB_8888)
+    //Replicates the user image four times into the emptyQuadBitmap to create the quadImage to overlay on the cake
+    for (i in 0 until quadImageBitmap.width) {
+        for (j in 0 until quadImageBitmap.height) {
+            val pixel = quadImageBitmap.getPixel(i, j)
+
+            quadBitmapHolder.setPixel(i, j, pixel)
+            quadBitmapHolder.setPixel(i + quadImageBitmap.width, j, pixel)
+            quadBitmapHolder.setPixel(i, j + quadImageBitmap.height, pixel)
+            quadBitmapHolder.setPixel(
+                i + quadImageBitmap.width,
+                j + quadImageBitmap.height,
+                pixel
+            )
+        }
+    }
+    return quadBitmapHolder
+}
+
+
+
+fun manualOverlay(context: Context, bitmap: Bitmap): Bitmap {
     val resources = context.resources
-    val exampleBitmap = Bitmap.createBitmap(bitmap)
-//    val exampleBitmap = BitmapFactory.decodeResource(resources, R.drawable.daveandkatie)
-    val ratio1 = exampleBitmap.width.toDouble()
-    val ratio2 = exampleBitmap.height.toDouble()
-    val ratio = ((ratio1/ratio2)*500).toInt()
-    Log.d(TAG, "ratio1 is $ratio1 ratio 2 is $ratio2 ratio is $ratio")
-    val battenburgQuarterImageBitmap = Bitmap.createScaledBitmap(exampleBitmap, ratio, 500,true)
-    val imageHeight = battenburgQuarterImageBitmap.height
-    val imageWidth = battenburgQuarterImageBitmap.width
-    Log.d(TAG, "bitmap height is ${battenburgQuarterImageBitmap.height} and width is ${battenburgQuarterImageBitmap.width}")
-    val emptyQuadBitmap = Bitmap.createBitmap(imageWidth *2, imageHeight *2, Bitmap.Config.ARGB_8888)
+    val cakeImage = BitmapFactory.decodeResource(resources, R.drawable.battenburgslice2)
+    val resizedCakeImage = Bitmap.createScaledBitmap(cakeImage, (bitmap.width*1.5).toInt(), (bitmap.height*1.25).toInt(),true)
 
-    val battenburgSliceImage = BitmapFactory.decodeResource(resources, R.drawable.battenburgslice2)
-    var resizedBattenburgBackgroundImage = Bitmap.createScaledBitmap(battenburgSliceImage, (emptyQuadBitmap.width*1.5).toInt(), (emptyQuadBitmap.height*1.25).toInt(),true)
-    GlobalScope.launch {
-        Log.d(TAG, "Joinimages function called, GlobalScope coroutine launched")
-Log.d(TAG, "Katie drawable is of size ${battenburgSliceImage.width} width and ${battenburgSliceImage.height} height")
+    //X and Y start points located inside the marzipan of the cake image so the quadimage only covers the battenburg squares
+    val overlayQuadOnCakeXStart = (0.18*resizedCakeImage.width).toInt()
+    val overlayQuadOnCakeYStart = (0.06*resizedCakeImage.height).toInt()
 
-// TODO: Get a squarer cake image and/or do the overlay so that the image is contained within the coloured quarter
-// TODO: sort out the resizing function so that either a) the orginal aspect ratio is retained or b) the image is cropped to that ratio
-// TODO: Eliminated the pinkpixel and yellowpixel changes as the battenburg slice colour effects this colour change
+    val overlayWidth = bitmap.width
+    val overlayHeight = bitmap.height
 
-        val overlayJustSquaresx1 = (0.18*resizedBattenburgBackgroundImage.width).toInt()
-        val overlayJustSquaresy1 = (0.06*resizedBattenburgBackgroundImage.height).toInt()
+    for (i in 0 until overlayWidth){
+        for (j in 0 until overlayHeight) {
+            val cakePixel = resizedCakeImage.getPixel(i+overlayQuadOnCakeXStart, j+overlayQuadOnCakeYStart)
+            val cakeRed = red(cakePixel)
+            val cakeGreen = green(cakePixel)
+            val cakeBlue = blue(cakePixel)
+            val cakeAlpha = cakePixel.alpha
+            val quadBitmapPixel = bitmap.getPixel(i,j)
+            val quadRed = quadBitmapPixel.red
+            val quadGreen = quadBitmapPixel.green
+            val quadBlue = quadBitmapPixel.blue
+            val quadAlpha = quadBitmapPixel.alpha
+            val overlayRed = ((cakeRed*0.65)+(quadRed*0.35)).toInt()
+            val overlayGreen = ((cakeGreen*0.65)+(quadGreen*0.35)).toInt()
+            val overlayBlue = ((cakeBlue*0.65)+(quadBlue*0.35)).toInt()
+            val overlayAlpha = ((cakeAlpha*0.65)+(quadAlpha*0.35)).toInt()
+            val overlayPixel = Color(overlayRed, overlayGreen, overlayBlue, overlayAlpha).toArgb()
 
-        for (i in 0 until battenburgQuarterImageBitmap.width) {
-            for (j in 0 until battenburgQuarterImageBitmap.height) {
-                val pixel = battenburgQuarterImageBitmap.getPixel(i, j)
-                val red = android.graphics.Color.red(pixel)
-                val green = android.graphics.Color.green(pixel)
-                val blue = android.graphics.Color.blue(pixel)
-                val pinkPixel = Color(minOf(255, red+50), maxOf(0, green-30), maxOf(0, blue-30)).toArgb()
-                val yellowPixel = Color(minOf(255, red+50), minOf(255, green+50), maxOf(0, blue-20)).toArgb()
-
-                emptyQuadBitmap.setPixel(i, j, pixel)
-                emptyQuadBitmap.setPixel(i+battenburgQuarterImageBitmap.width, j, pixel)
-                emptyQuadBitmap.setPixel(i, j+battenburgQuarterImageBitmap.height, pixel)
-                emptyQuadBitmap.setPixel(i+battenburgQuarterImageBitmap.width, j+battenburgQuarterImageBitmap.height, pixel)
-            }
-        }
-
-        Log.d(TAG, "Quadbitmap complete size is ${emptyQuadBitmap.width} wide ${emptyQuadBitmap.height} height")
-
-        val overlayWidth = emptyQuadBitmap.width
-        val overlayHeight = emptyQuadBitmap.height
-
-            for (i in 0 until overlayWidth){
-            for (j in 0 until overlayHeight) {
-                val maskPixel = resizedBattenburgBackgroundImage.getPixel(i+overlayJustSquaresx1, j+overlayJustSquaresy1)
-                val maskRed = android.graphics.Color.red(maskPixel)
-                val maskGreen = android.graphics.Color.green(maskPixel)
-                val maskBlue = android.graphics.Color.blue(maskPixel)
-                val quadBitmapPixel = emptyQuadBitmap.getPixel(i,j)
-                val quadRed = android.graphics.Color.red(quadBitmapPixel)
-                val quadGreen = android.graphics.Color.green(quadBitmapPixel)
-                val quadBlue = android.graphics.Color.blue(quadBitmapPixel)
-                val overlayRed = ((maskRed*0.65)+(quadRed*0.35)).toInt()
-                val overlayGreen = ((maskGreen*0.65)+(quadGreen*0.35)).toInt()
-                val overlayBlue = ((maskBlue*0.65)+(quadBlue*0.35)).toInt()
-                val overlayPixel = Color(overlayRed, overlayGreen, overlayBlue).toArgb()
-
-                resizedBattenburgBackgroundImage.setPixel((i+overlayJustSquaresx1),(j+overlayJustSquaresy1),overlayPixel)
-// TODO: Blend the edge of the overlaid image. Gradually change the overlay values for some pixels at the edges. 
-            }
+            resizedCakeImage.setPixel((i+overlayQuadOnCakeXStart),(j+overlayQuadOnCakeYStart),overlayPixel)
         }
     }
-    return resizedBattenburgBackgroundImage
+    return resizedCakeImage
 }
 
-private fun marzipanThis(quadBitmap: Bitmap) {
-    val marzipan = Color(255,255,0).toArgb()
-    for (i in 0 until quadBitmap.width) {
-        for (j in 0..20) {
-            quadBitmap.setPixel(i, j, marzipan)
+private fun blendThis(quadBitmap: Bitmap, resizedCakeImage: Bitmap) {
+//Scan the top 20 rows
+    val overlayQuadOnCakeXStart = (0.18*resizedCakeImage.width).toInt()
+    val overlayQuadOnCakeYStart = (0.06*resizedCakeImage.height).toInt()
+    var q = 0
+    for (i in 0 until quadBitmap.width-1) {
+        for (j in 0..50) {
+            val bottomPixel = resizedCakeImage.getPixel(i+overlayQuadOnCakeXStart, j+overlayQuadOnCakeYStart)
+            val topPixels  = quadBitmap.getPixel(i,j)
+            val topred = topPixels.red
+            val topgreen = topPixels.green
+            val topblue = topPixels.blue
+            //val topalpha = ((255-(255-j*12))*topPixels.alpha)
+            //val topPixelValue =  Color(topred,topgreen,topblue,(255-j*12)).toArgb()
+            val bottomred = bottomPixel.red
+            val bottomgreen = bottomPixel.green
+            val bottomblue = bottomPixel.blue
+            val bottomalpha = ((255-j*5)*bottomPixel.alpha)
+            val bottomPixelValue = Color(bottomred,bottomgreen,bottomblue,(255-(255-j*5))).toArgb()
+            val overlayRed = ((bottomred*(1-(q*0.007)))+(topred*((q*0.007)))).toInt()
+            val overlayGreen = ((bottomgreen*(1-(q*0.007)))+(topgreen*((q*0.007)))).toInt()
+            val overlayBlue = ((bottomblue*(1-(q*0.007)))+(topblue*((q*0.007)))).toInt()
+            //val overlayAlpha = ((bottomalpha*0.65)+(topalpha*0.35)).toInt()
+            val overlayPixel = Color(overlayRed, overlayGreen, overlayBlue).toArgb()
+            quadBitmap.setPixel(i, j, overlayPixel)
         }
     }
-
-    for (i in 0 until quadBitmap.width) {
-        for (j in quadBitmap.height - 20 until quadBitmap.height) {
-            quadBitmap.setPixel(i, j, marzipan)
+//Scan the bottom 20 rows
+    for (i in 0 until quadBitmap.width-1) {
+        for (j in quadBitmap.height - 20 until quadBitmap.height-1) {
+            val bottomPixels  = quadBitmap.getPixel(i,j)
+            val red = bottomPixels.red
+            val green = bottomPixels.green
+            val blue = bottomPixels.blue
+            val bottomPixelValue =  Color(red,green,blue,(quadBitmap.height-j)*12).toArgb()
+            quadBitmap.setPixel(i, j, bottomPixelValue)
         }
     }
-
+//Scan the left 20 columns
     for (i in 0 until 20) {
-        for (j in 0 until quadBitmap.height) {
-            quadBitmap.setPixel(i, j, marzipan)
+        for (j in 0 until quadBitmap.height-1) {
+            val leftPixels  = quadBitmap.getPixel(i,j)
+            val red = leftPixels.red
+            val green = leftPixels.green
+            val blue = leftPixels.blue
+            val leftPixelValue =  Color(red,green,blue,(255-(255-q*12))).toArgb()
+            quadBitmap.setPixel(i, j, leftPixelValue)
         }
+        q++
     }
-
-    for (i in quadBitmap.width - 20 until quadBitmap.width - 1) {
+    q=0
+//Scan the right 20 columns
+    for (i in quadBitmap.width- 20 until quadBitmap.width- 1) {
         for (j in 0 until quadBitmap.height) {
-            quadBitmap.setPixel(i, j, marzipan)
+            val topPixels = quadBitmap.getPixel(i, j)
+            val red = topPixels.red
+            val green = topPixels.green
+            val blue = topPixels.blue
+            val setPixelValue = Color(red, green, blue, (255 - q * 12)).toArgb()
+            quadBitmap.setPixel(i, j, setPixelValue)
+            Log.d(TAG, "x = $i, j = $j ${setPixelValue.alpha}")
         }
+        q++
     }
 }
+
