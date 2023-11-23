@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.battenburger.presentation.BattenburgImageScreen
+import com.example.battenburger.presentation.BattenburgProcessingScreen
 import com.example.battenburger.presentation.DisplayBattenburgScreen
 import com.example.battenburger.presentation.SelectPhotoScreen
 
@@ -18,7 +18,7 @@ fun Navigation() {
             SelectPhotoScreen(navController = navController)
         }
         composable(route = Screen.CropImageScreen.route) {
-            BattenburgImageScreen(navController = navController)
+            BattenburgProcessingScreen(navController = navController)
         }
         composable(route = Screen.DisplayBattenburgScreen.route) {
             DisplayBattenburgScreen(navController = navController)

@@ -28,7 +28,7 @@ import kotlinx.coroutines.runBlocking
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun BattenburgImageScreen(navController: NavController){
+fun BattenburgProcessingScreen(navController: NavController){
     val context = LocalContext.current
     selectedImageBitMap = convertUriToBitmap(context)
     val viewmodel = BattenburgImageScreenViewModel()

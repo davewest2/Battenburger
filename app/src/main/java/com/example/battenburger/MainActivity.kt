@@ -18,6 +18,7 @@ import com.example.battenburger.ui.theme.BattenburgerTheme
 const val TAG = "TAG"
 lateinit var selectedImageBitMap: Bitmap
 lateinit var quadImageBitMap: Bitmap
+lateinit var saveIt: Bitmap
 
 class MainActivity : ComponentActivity() {
 
