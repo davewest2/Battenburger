@@ -28,7 +28,9 @@ fun saveImageToMediaStore(context: Context, displayName: String, bitmap: Bitmap)
 
     return try {
         resolver.openOutputStream(imageContentUri, "w").use { os ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
+            if (os != null) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

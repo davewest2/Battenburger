@@ -50,30 +50,30 @@ fun UseCanvasToOverlay(bitmap1: Bitmap, context: Context) {
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color.Yellow)
-        .drawWithCache {
-            val width = this.size.width.toInt()
-            val height = this.size.height.toInt()
-            onDrawWithContent {
-                val pictureCanvas =
-                    androidx.compose.ui.graphics.Canvas(
-                        picture.beginRecording(
-                            width,
-                            height
-                        )
-                    )
-                draw(this, this.layoutDirection, pictureCanvas, this.size) {
-                    this@onDrawWithContent.drawContent()
-                }
-                picture.endRecording()
-
-                drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
-            }
-        }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Yellow),
+                .background(Color.Yellow)
+                .drawWithCache {
+                    val width = this.size.width.toInt()
+                    val height = this.size.height.toInt()
+                    onDrawWithContent {
+                        val pictureCanvas =
+                            androidx.compose.ui.graphics.Canvas(
+                                picture.beginRecording(
+                                    width,
+                                    height
+                                )
+                            )
+                        draw(this, this.layoutDirection, pictureCanvas, this.size) {
+                            this@onDrawWithContent.drawContent()
+                        }
+                        picture.endRecording()
+
+                        drawIntoCanvas { canvas -> canvas.nativeCanvas.drawPicture(picture) }
+                    }
+                },
             Alignment.Center,
         )
         {
