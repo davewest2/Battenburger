@@ -4,17 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Picture
-import android.net.Uri
-import android.os.Environment
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,27 +30,27 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.example.battenburger.R
 import com.example.battenburger.saveIt
-import kotlinx.coroutines.GlobalScope
-import java.io.File
 
 @Composable
 fun UseCanvasToOverlay(bitmap1: Bitmap, context: Context) {
     val resources = context.resources
     val quadBitmap = provideQuadimage(bitmap1)
-
     val cakeImage = BitmapFactory.decodeResource(resources, R.drawable.battenburgslice2)
     val resizedCakeImage = Bitmap.createScaledBitmap(cakeImage, (quadBitmap.width*1.5).toInt(), (quadBitmap.height*1.25).toInt(),true)
     val aspectRatio = resizedCakeImage.width/resizedCakeImage.height
-
     val picture = remember { Picture() }
-
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .background(Color.Yellow)
+        .background(Color.Yellow),
+        Arrangement.Center
     ) {
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Yellow))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,31 +97,23 @@ fun UseCanvasToOverlay(bitmap1: Bitmap, context: Context) {
                 )
             }
         }
-        // TODO: Implement the button to save the composable as an image file
+        // TODO: Change so that the create bitmap from picture is done automatically or in
+        //  same coroutine as  saveImageToMediaStore function
         Button(onClick = {
-            saveIt = createBitmapFromPicture(picture)
-
-        })
-        {
-            Text(
-                textAlign = TextAlign.Center,
-                text = "Convert it!")
-        }
-
-        Button(onClick = {
-            saveImageToMediaStore(context, "change this", saveIt )
-
-        })
+            saveIt = createBitmapFromPicture(picture, context)
+        },
+            elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)
+        )
         {
             Text(
                 textAlign = TextAlign.Center,
                 text = "Save it!")
         }
     }
-
 }
 
-private fun createBitmapFromPicture(picture: Picture): Bitmap {
+private fun createBitmapFromPicture(picture: Picture, context: Context): Bitmap {
     val bitmap = Bitmap.createBitmap(
         picture.width,
         picture.height,
@@ -131,23 +123,8 @@ private fun createBitmapFromPicture(picture: Picture): Bitmap {
     val canvas = android.graphics.Canvas(bitmap)
     canvas.drawColor(android.graphics.Color.WHITE)
     canvas.drawPicture(picture)
+    saveIt = bitmap
+    saveImageToMediaStore(context, "change this", saveIt )
     return bitmap
 }
 
-//private suspend fun Bitmap.saveToDisk(context: Context): Uri {
-//    val file = File(
-//        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-//        "screenshot-${System.currentTimeMillis()}.png"
-//    )
-//
-//    file.writeBitmap(this, Bitmap.CompressFormat.PNG, 100)
-//
-//    //return scanFilePath(context, file.path) ?: throw Exception("File could not be saved")
-//}
-
-private fun File.writeBitmap(bitmap: Bitmap, format: Bitmap.CompressFormat, quality: Int) {
-    outputStream().use { out ->
-        bitmap.compress(format, quality, out)
-        out.flush()
-    }
-}
