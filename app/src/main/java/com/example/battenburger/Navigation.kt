@@ -17,7 +17,7 @@ fun Navigation() {
         composable(route = Screen.SelectPhotoScreen.route) {
             SelectPhotoScreen(navController = navController)
         }
-        composable(route = Screen.CropImageScreen.route) {
+        composable(route = Screen.BattenburgProcessingScreen.route) {
             BattenburgProcessingScreen(navController = navController)
         }
         composable(route = Screen.DisplayBattenburgScreen.route) {

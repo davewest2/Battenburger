@@ -5,16 +5,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +26,7 @@ import com.example.battenburger.R
 import com.example.battenburger.Screen
 import com.example.battenburger.TAG
 import com.example.battenburger.domain.SelectPhotoViewModel
-import com.example.battenburger.domain.saveImageToInternalStorage
+import com.example.battenburger.domain.saveImageToInternalAppStorage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,10 +37,8 @@ import kotlinx.coroutines.launch
 fun SelectPhotoScreen(navController: NavController) {
 
     val selectPhotoViewModel = SelectPhotoViewModel()
-
     val context = LocalContext.current
     val files: Array<String> = context.fileList()
-
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { contentUri -> selectPhotoViewModel.selectedImageUri = contentUri }
@@ -86,10 +80,10 @@ fun SelectPhotoScreen(navController: NavController) {
                 Button(
                     onClick = {
                         GlobalScope.launch(Dispatchers.IO) {
-                            saveImageToInternalStorage(context, selectPhotoViewModel.selectedImageUri!!)
+                            saveImageToInternalAppStorage(context, selectPhotoViewModel.selectedImageUri!!)
                             Log.d(TAG, "image saved to internal storage, filename ${files} which should be image.jpg")
                         }
-                        navController.navigate(Screen.CropImageScreen.route)
+                        navController.navigate(Screen.BattenburgProcessingScreen.route)
                     },
                     elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)

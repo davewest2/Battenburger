@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -32,25 +33,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.battenburger.R
+import com.example.battenburger.quadImageBitMap
 import com.example.battenburger.saveIt
 
 @Composable
 fun UseCanvasToOverlay(bitmap1: Bitmap, context: Context) {
     val resources = context.resources
-    val quadBitmap = provideQuadimage(bitmap1)
     val cakeImage = BitmapFactory.decodeResource(resources, R.drawable.battenburgslice2)
-    val resizedCakeImage = Bitmap.createScaledBitmap(cakeImage, (quadBitmap.width*1.5).toInt(), (quadBitmap.height*1.25).toInt(),true)
+    val resizedCakeImage = Bitmap.createScaledBitmap(cakeImage, (quadImageBitMap.width*1.5).toInt(), (quadImageBitMap.height*1.25).toInt(),true)
     val aspectRatio = resizedCakeImage.width/resizedCakeImage.height
     val picture = remember { Picture() }
 
-    Column(modifier = Modifier
+    Column(
+        modifier = Modifier
         .fillMaxSize()
         .background(Color.Yellow),
-        Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier
+        Spacer(
+            modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Yellow))
+            .background(Color.Yellow)
+            .size(75.dp)
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,16 +95,22 @@ fun UseCanvasToOverlay(bitmap1: Bitmap, context: Context) {
                     .asImageBitmap(),
                     dstSize = IntSize(canvasWidth, canvasHeight)
                 )
-                drawImage(quadBitmap
+                drawImage(
+                    quadImageBitMap
                     .asImageBitmap(),
                     topLeft = Offset(180f, 150f),
                     blendMode = BlendMode.Hardlight
                 )
             }
         }
-        // TODO: Change so that the create bitmap from picture is done automatically or in
-        //  same coroutine as  saveImageToMediaStore function
-        Button(onClick = {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Yellow)
+                .size(75.dp)
+        )
+        Button(
+            onClick = {
             saveIt = createBitmapFromPicture(picture, context)
         },
             elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),

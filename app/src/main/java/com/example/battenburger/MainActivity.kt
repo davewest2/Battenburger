@@ -9,6 +9,9 @@ import com.example.battenburger.ui.theme.BattenburgerTheme
 
 // TODO: If possible to find a workable cropimage solution, would it be possible to crop to battenburg outline. Will make marzipan more tricky. 
 // TODO: If cropimage function still unworkable, explore Canvas options and try to create slice from composable. Canvas layers - like the frames for cat effects etc? 
+// TODO: Ensure that image to Battenburg is square and the right size before Battenburging it
+// TODO: Toast to say that save has been successful
+// TODO: Test viewmodel function and reaction to screen rotation throughout 
 
 const val TAG = "TAG"
 lateinit var selectedImageBitMap: Bitmap
