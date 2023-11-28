@@ -3,10 +3,8 @@ package com.example.battenburger.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.battenburger.Screen
-import com.example.battenburger.domain.BattenburgImageScreenViewModel
+import com.example.battenburger.domain.BattenburgProcessingScreenViewModel
 import com.example.battenburger.domain.convertUriToBitmap
-import com.example.battenburger.domain.provideQuadimage
+import com.example.battenburger.domain.provideSquareImageForQuad
 import com.example.battenburger.quadImageBitMap
 import com.example.battenburger.selectedImageBitMap
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -38,7 +36,7 @@ import kotlinx.coroutines.runBlocking
 fun BattenburgProcessingScreen(navController: NavController){
     val context = LocalContext.current
     selectedImageBitMap = convertUriToBitmap(context)
-    val viewmodel = BattenburgImageScreenViewModel()
+    val viewmodel = BattenburgProcessingScreenViewModel()
 
     Column(
         modifier = Modifier
@@ -55,8 +53,7 @@ fun BattenburgProcessingScreen(navController: NavController){
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow),
                 onClick = {
                     GlobalScope.launch() {
-                        quadImageBitMap = provideQuadimage(viewmodel.viewmodelImageToBattenburg)
-                    //manualOverlay(context, viewmodel.viewmodelImageToBattenburg)
+                        quadImageBitMap = provideSquareImageForQuad(viewmodel.viewmodelImageToBattenburg)
                     }
                     runBlocking {
                         delay(3000L)
