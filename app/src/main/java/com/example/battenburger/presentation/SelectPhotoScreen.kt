@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.battenburger.R
@@ -31,11 +32,14 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.Date
 
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun SelectPhotoScreen(navController: NavController) {
 
+    var photoName = ""
     val selectPhotoViewModel = SelectPhotoViewModel()
     val context = LocalContext.current
     val files: Array<String> = context.fileList()
@@ -43,6 +47,9 @@ fun SelectPhotoScreen(navController: NavController) {
         contract = ActivityResultContracts.GetContent(),
         onResult = { contentUri -> selectPhotoViewModel.selectedImageUri = contentUri }
     )
+    val takePhoto = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        navController.navigate(Screen.BattenburgProcessingScreen.route)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -64,6 +71,28 @@ fun SelectPhotoScreen(navController: NavController) {
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)
                 ) {
                     Text(text = "Pick a photo")
+                }
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Yellow),
+                horizontalArrangement = Arrangement.SpaceAround,
+
+                ) {
+                Button(onClick = {
+                    photoName = "image.jpg"
+                    val photoFile = File(context.filesDir, photoName)
+                    val photoUri = FileProvider.getUriForFile(context, "com.example.battenburger.fileprovider", photoFile)
+                    takePhoto.launch(photoUri)
+                },
+                    elevation = ButtonDefaults.buttonElevation(20.dp,0.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta, contentColor = Color.Yellow)
+                ) {
+                    Text(text = "Take a photo")
                 }
             }
         }
@@ -108,3 +137,4 @@ fun SelectPhotoScreen(navController: NavController) {
         }
     }
 }
+
